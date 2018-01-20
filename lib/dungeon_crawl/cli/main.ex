@@ -50,7 +50,7 @@ defmodule DungeonCrawl.CLI.Main do
     @doc "Generates a number 1..100 to select a room"
     defp room_selector(rooms) do
       random_number = Enum.random(1..100)
-      Enum.find(rooms, fn %{normal_chance: chance} -> random_number in chance end)
+      Enum.find(rooms, fn %{chance: chance} -> random_number in chance end)
     end
 
     defp hero_choice do

@@ -11,4 +11,11 @@ defmodule DungeonCrawl.Room.Triggers.Rest do
     {character, :forward}
   end
 
+  def run(character, %DungeonCrawl.Room.Action{id: :forward}) do
+    Shell.info("Rest is for the weak!")
+    Shell.info(DungeonCrawl.Character.current_stats(character))
+
+    {character, :forward}
+  end
+
 end
