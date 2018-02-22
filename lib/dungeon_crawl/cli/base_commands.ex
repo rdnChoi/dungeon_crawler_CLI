@@ -25,11 +25,32 @@ defmodule DungeonCrawl.CLI.BaseCommands do
     Shell.cmd("clear")
   end
 
+  @doc "Error management using 'with' statement - Pragmatic"
   def ask_for_option(options) do
-    index = ask_for_index(options)
-    chosen_option = Enum.at(options, index)
-    chosen_option
-      || (display_invalid_option() && ask_for_option(options))
+    answer =
+      options
+      |> display_options
+      |> generate_question
+      |> Shell.prompt
+    with {option, _} <- Integer.parse(answer),
+          chosen when chosen != nil <- Enum.at(options, option - 1) do
+      chosen
+    else
+      :error -> retry(options)
+      nil -> retry(options)
+    end
+  end
+
+  def retry(options) do
+    display_error("Invalid option")
+    ask_for_option(options)
+  end
+
+  def display_error(message) do
+    Shell.cmd("clear")
+    Shell.error(message)
+    Shell.prompt("Press enter to continue.")
+    Shell.cmd("clear")   
   end
 
   def display_options(options) do #Takes a list of maps
@@ -47,8 +68,9 @@ defmodule DungeonCrawl.CLI.BaseCommands do
     "Which one? [#{options}]\n"  
   end
 
-  def parse_answer(answer) do
-        {option, _} = Integer.parse(answer) #Returns {Integer, Status}
-        option - 1 #Account for index starting at 1
-    end
+  # Replaced by 'while' block
+  # def parse_answer(answer) do
+  #       {option, _} = Integer.parse(answer) #Returns {Integer, Status}
+  #       option - 1 #Account for index starting at 1
+  #   end
 end
